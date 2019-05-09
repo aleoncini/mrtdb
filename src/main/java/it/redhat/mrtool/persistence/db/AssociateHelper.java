@@ -16,13 +16,18 @@ public class AssociateHelper {
         return new Associate().build(document);
     }
 
+    public boolean exist(String rhid){
+        Document query = new Document("rhid", rhid);
+        Document document = DBTool.getInstance().getCollection(COLLECTION_NAME).find(query).first();
+        return (document != null);
+    }
+
     public void insertOrUpdate(String jsonString)  {
         this.insertOrUpdate(new Associate().build(jsonString));
     }
 
     public void insertOrUpdate(Associate associate){
-        Associate associateFromDB = get(associate.getRedhatId());
-        if (associateFromDB != null){
+        if (exist(associate.getRedhatId())){
             Document query = new Document("rhid", associate.getRedhatId());
             DBTool.getInstance().getCollection(COLLECTION_NAME).updateOne(query, associate.toDocument());
         } else {
