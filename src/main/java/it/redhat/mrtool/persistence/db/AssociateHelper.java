@@ -16,7 +16,7 @@ public class AssociateHelper {
         return new Associate().build(document);
     }
 
-    public void insertOrUpdate(String jsonString){
+    public void insertOrUpdate(String jsonString)  {
         this.insertOrUpdate(new Associate().build(jsonString));
     }
 

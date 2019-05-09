@@ -7,7 +7,6 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 public class DBTool {
-    public final static String DB_NAME = "mrtool";
     private static DBTool theInstance;
     MongoClient mongoClient;
     MongoDatabase database;
@@ -20,8 +19,14 @@ public class DBTool {
     }
 
     private DBTool(){
-        mongoClient = MongoClients.create();
-        database = mongoClient.getDatabase(DB_NAME);
+        String host = System.getenv("MONGODB_SERVICE_HOST");
+        String port = System.getenv("MONGODB_SERVICE_PORT");
+        String user = System.getenv("MONGODB_database-user");
+        String pass = System.getenv("MONGODB_database-password");
+        String name = System.getenv("MONGODB_database-name");
+        String connectionString = "mongodb://" + user + ":" + pass + "@" + host + ":" + port + "/" + name;
+        mongoClient = MongoClients.create(connectionString);
+        database = mongoClient.getDatabase(name);
     }
 
     public MongoCollection<Document> getCollection(String collection){
