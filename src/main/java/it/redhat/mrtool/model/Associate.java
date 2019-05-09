@@ -80,7 +80,7 @@ public class Associate {
         if ((redhatId == null) || (redhatId.length() == 0) || (name == null) || (name.length() == 0) || (costCenter == null) || (costCenter.length() == 0) || (car == null)){
             return null;
         }
-        Document carDoc = new Car().toDocument();
+        Document carDoc = car.toDocument();
         return new Document("rhid", redhatId)
                 .append("name", name)
                 .append("costCenter", costCenter)
