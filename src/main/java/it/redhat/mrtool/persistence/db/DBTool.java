@@ -19,7 +19,7 @@ public class DBTool {
     }
 
     private DBTool(){
-        String host = System.getenv("MONGODB_SERVICE_HOST");
+        String host = System.getenv("MONGODB_SERVICE");
         String port = System.getenv("MONGODB_SERVICE_PORT");
         String user = System.getenv("MONGODB_database-user");
         String pass = System.getenv("MONGODB_database-password");
