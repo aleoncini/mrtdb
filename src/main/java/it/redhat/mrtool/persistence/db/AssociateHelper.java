@@ -16,6 +16,18 @@ public class AssociateHelper {
         return new Associate().build(document);
     }
 
+    public List<Associate> getAssociates(){
+        List<Associate> associates = new ArrayList<Associate>();
+        List<Document> docs = new ArrayList<Document>();
+        DBTool.getInstance().getCollection(COLLECTION_NAME)
+                .find()
+                .into(docs);
+        for (Document doc : docs) {
+            associates.add(new Associate().build(doc));
+        }
+        return associates;
+    }
+
     public boolean exist(Associate associate){
         Document query = new Document("rhid", associate.getRedhatId());
         Document document = DBTool.getInstance().getCollection(COLLECTION_NAME).find(query).first();
