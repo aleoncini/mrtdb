@@ -6,9 +6,11 @@ import it.redhat.mrtool.persistence.db.LocationHelper;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.logging.Logger;
 
 @Path("/locations")
 public class LocationService {
+    private static final Logger logger = Logger.getLogger("org.beccaria.domotics");
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -21,6 +23,7 @@ public class LocationService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("add")
     public Response insert(String jsonString) {
+        logger.info("[LocationService] requested insert for " + jsonString);
         new LocationHelper().insertOrUpdate(new Location().build(jsonString));
         return Response.status(200).entity("{\"result\":\"success\"}").build();
     }

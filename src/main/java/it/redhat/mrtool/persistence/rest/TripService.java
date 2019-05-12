@@ -7,9 +7,11 @@ import it.redhat.mrtool.persistence.db.TripHelper;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.logging.Logger;
 
 @Path("/trips")
 public class TripService {
+    private static final Logger logger = Logger.getLogger("org.beccaria.domotics");
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -23,6 +25,7 @@ public class TripService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("add")
     public Response insert(String jsonString) {
+        logger.info("[TripService] requested insert for " + jsonString);
         new TripHelper().insertOrUpdate(new Trip().build(jsonString));
         return Response.status(200).entity("{\"result\":\"success\"}").build();
     }
