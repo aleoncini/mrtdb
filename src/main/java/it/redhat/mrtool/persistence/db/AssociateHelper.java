@@ -16,8 +16,8 @@ public class AssociateHelper {
         return new Associate().build(document);
     }
 
-    public boolean exist(String rhid){
-        Document query = new Document("rhid", rhid);
+    public boolean exist(Associate associate){
+        Document query = new Document("rhid", associate.getRedhatId());
         Document document = DBTool.getInstance().getCollection(COLLECTION_NAME).find(query).first();
         return (document != null);
     }
@@ -27,9 +27,9 @@ public class AssociateHelper {
     }
 
     public void insertOrUpdate(Associate associate){
-        if (exist(associate.getRedhatId())){
+        if (exist(associate)){
             Document query = new Document("rhid", associate.getRedhatId());
-            DBTool.getInstance().getCollection(COLLECTION_NAME).updateOne(query, associate.toDocument());
+            DBTool.getInstance().getCollection(COLLECTION_NAME).replaceOne(query, associate.toDocument());
         } else {
             DBTool.getInstance().getCollection(COLLECTION_NAME).insertOne(associate.toDocument());
         }
