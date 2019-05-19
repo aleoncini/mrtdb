@@ -20,10 +20,19 @@ public class TripHelper {
 
     public String getJsonTrips(String associateId, int year, int month){
         List<Document> docs = DBTool.getInstance().getCollection(COLLECTION_NAME)
-                .find(and(eq("associateId", associateId), eq("date.year", year), eq("date.month", month)))
+                .find(and(eq("associateId", associateId), eq("date.year", year)))
                 .into(new ArrayList<Document>());
-        int dist = calculateDistanceOfTheYear(associateId, year);
-        return listToJson(docs, dist);
+        int totalDistance = 0;
+        List<Document> docsOfTheMonth = new ArrayList<Document>();
+        for (Document doc : docs) {
+            Document location = (Document) doc.get("location");
+            totalDistance += location.getInteger("distance");
+            Document date = (Document) doc.get("date");
+            if (month == date.getInteger("month")){
+                docsOfTheMonth.add(doc);
+            }
+        }
+        return listToJson(docsOfTheMonth, totalDistance);
     }
 
     public List<Trip> getTrips(String associateId, int year, int month){
@@ -107,18 +116,6 @@ public class TripHelper {
 
     public int getTotalYearDistance(String associateId, int year){
         return distance(getTripsOfTheYear(associateId, year));
-    }
-
-    private int calculateDistanceOfTheYear(String associateId, int year){
-        List<Document> docs = DBTool.getInstance().getCollection(COLLECTION_NAME)
-                .find(and(eq("associateId", associateId), eq("date.year", year)))
-                .projection(fields(include("distance"), excludeId()))
-                .into(new ArrayList<Document>());
-        int total = 0;
-        for (Document doc : docs) {
-            total += doc.getInteger("distance");
-        }
-        return total;
     }
 
 }
