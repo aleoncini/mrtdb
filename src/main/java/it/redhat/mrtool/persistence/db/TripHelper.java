@@ -11,6 +11,9 @@ import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.excludeId;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 
 public class TripHelper {
     public final static String COLLECTION_NAME = "trips";
@@ -19,7 +22,8 @@ public class TripHelper {
         List<Document> docs = DBTool.getInstance().getCollection(COLLECTION_NAME)
                 .find(and(eq("associateId", associateId), eq("date.year", year), eq("date.month", month)))
                 .into(new ArrayList<Document>());
-        return listToJson(docs);
+        int dist = calculateDistanceOfTheYear(associateId, year);
+        return listToJson(docs, dist);
     }
 
     public List<Trip> getTrips(String associateId, int year, int month){
@@ -58,11 +62,12 @@ public class TripHelper {
         return trips;
     }
 
-    private String listToJson(List<Document> trips){
+    private String listToJson(List<Document> trips, int distance){
         boolean isFirst = true;
 
         StringBuffer buffer = new StringBuffer();
         buffer.append("{");
+        buffer.append(" \"totalDistance\": ").append(distance).append(",");
         buffer.append(" \"trips\": [ ");
 
         for (Document trip:trips) {
@@ -102,6 +107,18 @@ public class TripHelper {
 
     public int getTotalYearDistance(String associateId, int year){
         return distance(getTripsOfTheYear(associateId, year));
+    }
+
+    private int calculateDistanceOfTheYear(String associateId, int year){
+        List<Document> docs = DBTool.getInstance().getCollection(COLLECTION_NAME)
+                .find(and(eq("associateId", associateId), eq("date.year", year)))
+                .projection(fields(include("distance"), excludeId()))
+                .into(new ArrayList<Document>());
+        int total = 0;
+        for (Document doc : docs) {
+            total += doc.getInteger("distance");
+        }
+        return total;
     }
 
 }
